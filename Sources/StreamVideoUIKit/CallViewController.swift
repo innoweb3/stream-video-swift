@@ -124,6 +124,30 @@ final class CallViewContainer: UIView {
 
     /// Passing the touch to the below layer if its not hitting one of its subviews
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        func containsInteractiveView(_ view: UIView, point: CGPoint) -> Bool {
+            let localPoint = convert(point, to: view)
+            if view.alpha > 0.01 &&
+               !view.isHidden &&
+               view.isUserInteractionEnabled &&
+               view.point(inside: localPoint, with: event) {
+                return true
+            }
+            for sub in view.subviews {
+                if containsInteractiveView(sub, point: point) {
+                    return true
+                }
+            }
+            return false
+        }
+        for subview in subviews {
+            if containsInteractiveView(subview, point: point) {
+                return true
+            }
+        }
+        return false
+    }
+    /*
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         guard let swiftUISubviews = subviews.first?.subviews else {
             return false
         }
@@ -136,5 +160,5 @@ final class CallViewContainer: UIView {
             return true
         }
         return false
-    }
+    }*/
 }

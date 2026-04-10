@@ -29,6 +29,10 @@ public struct CallControlsView: View {
             if ownCapabilities.contains(.sendAudio) == true {
                 MicrophoneIconView(viewModel: viewModel)
             }
+            
+            CustomAirPlayView(tintColor: .white)
+                .frame(width: 44, height: 44)
+                .modifier(ShadowModifier())
 
             Spacer()
 
@@ -201,6 +205,82 @@ public struct SpeakerIconView: View {
     public var body: some View {
         StatelessSpeakerIconView(call: viewModel.call) { [weak viewModel] in
             viewModel?.toggleSpeaker()
+        }
+    }
+}
+
+struct CustomAirPlayView: UIViewRepresentable {
+    
+    // 自定义按钮颜色
+    var tintColor: UIColor = .blue
+    
+    func makeUIView(context: Context) -> UIButton {
+        // 创建一个自定义按钮
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "airplayaudio"), for: .normal)
+        button.tintColor = tintColor
+        button.layer.cornerRadius = 22.0
+        button.layer.masksToBounds = true
+        
+        button.backgroundColor = UIColor { traitCollection in
+            traitCollection.userInterfaceStyle == .dark
+            ? UIColor(rgb: 0x19232d).withAlphaComponent(1.0)
+            : UIColor(rgb: 0x19232d).withAlphaComponent(1.0)
+        }
+        
+        // 创建并配置 AVRoutePickerView
+        let routePickerView = AVRoutePickerView()
+        routePickerView.isHidden = true // 隐藏原生的路由选择器视图
+        routePickerView.activeTintColor = .red
+        routePickerView.prioritizesVideoDevices = false
+        routePickerView.delegate = context.coordinator
+        
+        // 添加点击事件
+        button.addTarget(
+            context.coordinator,
+            action: #selector(Coordinator.showRoutePicker(_:)),
+            for: .touchUpInside
+        )
+        
+        // 将 routePickerView 添加到按钮上
+        button.addSubview(routePickerView)
+        
+        return button
+    }
+    
+    func updateUIView(_ uiView: UIButton, context: Context) {
+        uiView.tintColor = tintColor
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, AVRoutePickerViewDelegate {
+        var parent: CustomAirPlayView
+                
+        init(_ parent: CustomAirPlayView) {
+            self.parent = parent
+        }
+        
+        @objc func showRoutePicker(_ sender: UIButton) {
+            // 通过查找子视图中的 AVRoutePickerView 来显示路由选择器
+            if let routePickerView = sender.subviews.first(where: { $0 is AVRoutePickerView }) as? AVRoutePickerView {
+                // 模拟点击原生按钮
+                if let routePickerButton = routePickerView.subviews.first(where: { $0 is UIButton }) as? UIButton {
+                    routePickerButton.sendActions(for: .touchUpInside)
+                }
+            }
+        }
+        
+        // 当路由选择器将要弹出时调用
+        func routePickerViewWillBeginPresentingRoutes(_ routePickerView: AVRoutePickerView) {
+            print("开始显示路由选择器")
+        }
+        
+        // 当路由选择器关闭时调用
+        func routePickerViewDidEndPresentingRoutes(_ routePickerView: AVRoutePickerView) {
+            print("路由选择器已关闭")
         }
     }
 }
