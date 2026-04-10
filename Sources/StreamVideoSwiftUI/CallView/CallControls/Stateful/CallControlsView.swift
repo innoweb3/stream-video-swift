@@ -4,6 +4,7 @@
 
 import StreamVideo
 import SwiftUI
+import AVKit
 
 /// A view displaying call controls such as video toggle, microphone toggle, and participants list button.
 public struct CallControlsView: View {
