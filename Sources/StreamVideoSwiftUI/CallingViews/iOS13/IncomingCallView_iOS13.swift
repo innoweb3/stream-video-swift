@@ -18,12 +18,14 @@ public struct IncomingCallView_iOS13<Factory: ViewFactory>: View {
             
     var onCallAccepted: (String) -> Void
     var onCallRejected: (String) -> Void
+    @ObservedObject var callViewModel: CallViewModel
     
     public init(
         viewFactory: Factory = DefaultViewFactory.shared,
         callInfo: IncomingCall,
         onCallAccepted: @escaping (String) -> Void,
-        onCallRejected: @escaping (String) -> Void
+        onCallRejected: @escaping (String) -> Void,
+        callViewModel: CallViewModel
     ) {
         _viewModel = BackportStateObject(
             wrappedValue: IncomingViewModel(callInfo: callInfo)
@@ -31,6 +33,7 @@ public struct IncomingCallView_iOS13<Factory: ViewFactory>: View {
         self.viewFactory = viewFactory
         self.onCallAccepted = onCallAccepted
         self.onCallRejected = onCallRejected
+        self.callViewModel = callViewModel
     }
     
     public var body: some View {
@@ -39,7 +42,8 @@ public struct IncomingCallView_iOS13<Factory: ViewFactory>: View {
             callParticipants: viewModel.callParticipants,
             callInfo: viewModel.callInfo,
             onCallAccepted: onCallAccepted,
-            onCallRejected: onCallRejected
+            onCallRejected: onCallRejected,
+            callViewModel: callViewModel
         )
     }
 }

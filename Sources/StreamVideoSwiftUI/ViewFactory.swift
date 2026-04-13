@@ -223,7 +223,8 @@ extension ViewFactory {
                 },
                 onCallRejected: { _ in
                     viewModel.rejectCall(callType: callInfo.type, callId: callInfo.id)
-                }
+                },
+                callViewModel: viewModel
             )
         } else {
             return IncomingCallView_iOS13(
@@ -234,7 +235,8 @@ extension ViewFactory {
                 },
                 onCallRejected: { _ in
                     viewModel.rejectCall(callType: callInfo.type, callId: callInfo.id)
-                }
+                },
+                callViewModel: viewModel
             )
         }
     }

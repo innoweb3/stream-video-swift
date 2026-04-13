@@ -493,7 +493,6 @@
 		8269A9AC2F3CCEB800231585 /* Exceptions for "TestTools" folder in "StreamVideoSwiftUITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Credentials.xcconfig,
 				Robots/ParticipantRobot.swift,
 				Robots/Sinatra.swift,
 				UITests/Safari.swift,
@@ -504,7 +503,6 @@
 		8269A9AD2F3CCEB800231585 /* Exceptions for "TestTools" folder in "StreamVideoUIKitTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Credentials.xcconfig,
 				Robots/ParticipantRobot.swift,
 				Robots/Sinatra.swift,
 				UITests/Safari.swift,

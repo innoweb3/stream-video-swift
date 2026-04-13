@@ -349,11 +349,19 @@ public class Call: @unchecked Sendable, WSEventsSubscriber {
                 maxParticipants: maxParticipants
             )
         }
-
+        
+        let videoRequest: VideoSettingsRequest = .init(
+            accessRequestEnabled: video,
+            cameraDefaultOn: video,
+            cameraFacing: .front,
+            enabled: video,
+        targetResolution: TargetResolution(bitrate: 1500000, height: 720, width: 1280))
+        
         settingsOverride = CallSettingsRequest(
             backstage: backstage,
             limits: limits,
-            transcription: transcription
+            transcription: transcription,
+            video: videoRequest
         )
 
         let request = GetOrCreateCallRequest(
