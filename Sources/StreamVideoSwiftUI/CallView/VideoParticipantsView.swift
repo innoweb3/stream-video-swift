@@ -416,7 +416,7 @@ public struct VideoCallParticipantView<Factory: ViewFactory>: View {
 
     @ViewBuilder
     private var overlayView: some View {
-        CallParticipantImageView(
+        CallParticipantImageView2(
             viewFactory: viewFactory,
             id: participant.id,
             name: participant.name,
