@@ -35,7 +35,20 @@ public struct CallControlsView: View {
 //                .frame(width: 44, height: 44)
 //                .modifier(ShadowModifier())
             
-            CustomAudioRoutePicker()
+            CustomAudioRoutePicker { [weak viewModel] option in
+                guard let viewModel = viewModel else { return }
+                switch option {
+                case .speaker:
+                    guard !viewModel.callSettings.speakerOn else { return }
+                    viewModel.callSettings = viewModel.callSettings.withUpdatedSpeakerState(true)
+                case .receiver:
+                    guard viewModel.callSettings.speakerOn else { return }
+                    viewModel.callSettings = viewModel.callSettings.withUpdatedSpeakerState(false)
+                case .input:
+                    // 切到外接设备时不动 speakerOn；外设断开后 SDK 会按 speakerOn 决定回落
+                    break
+                }
+            }
                 .modifier(ShadowModifier())
 
             Spacer()

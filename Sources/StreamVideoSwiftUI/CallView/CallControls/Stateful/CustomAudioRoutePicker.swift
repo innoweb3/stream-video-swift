@@ -145,7 +145,11 @@ public struct CustomAudioRoutePicker: View {
     @ObservedObject private var manager = AudioRouteManager.shared
     @State private var presented = false
 
-    public init() {}
+    private let onSelection: ((AudioRouteOption) -> Void)?
+
+    public init(onSelection: ((AudioRouteOption) -> Void)? = nil) {
+        self.onSelection = onSelection
+    }
 
     public var body: some View {
         Button(action: {
@@ -171,6 +175,7 @@ public struct CustomAudioRoutePicker: View {
             let label = (option == manager.current) ? "\(option.title) ✓" : option.title
             return .default(Text(label)) {
                 manager.select(option)
+                onSelection?(option)
             }
         }
         buttons.append(.cancel(Text("取消")))
