@@ -31,8 +31,11 @@ public struct CallControlsView: View {
                 MicrophoneIconView(viewModel: viewModel)
             }
             
-            CustomAirPlayView(tintColor: .white)
-                .frame(width: 44, height: 44)
+//            CustomAirPlayView(tintColor: .white)
+//                .frame(width: 44, height: 44)
+//                .modifier(ShadowModifier())
+            
+            CustomAudioRoutePicker()
                 .modifier(ShadowModifier())
 
             Spacer()
