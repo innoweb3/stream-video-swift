@@ -25,8 +25,8 @@ public enum AudioRouteOption: Hashable, Identifiable {
 
     var title: String {
         switch self {
-        case .receiver:     return "听筒"
-        case .speaker:      return "扬声器"
+        case .receiver:     return "听筒".i18n
+        case .speaker:      return "扬声器".i18n
         case .input(let p): return p.portName
         }
     }
@@ -164,7 +164,7 @@ public struct CustomAudioRoutePicker: View {
         }
         .actionSheet(isPresented: $presented) {
             ActionSheet(
-                title: Text("音频输出"),
+                title: Text("音频输出".i18n),
                 buttons: actionSheetButtons
             )
         }
@@ -178,7 +178,14 @@ public struct CustomAudioRoutePicker: View {
                 onSelection?(option)
             }
         }
-        buttons.append(.cancel(Text("取消")))
+        buttons.append(.cancel(Text("取消".i18n)))
         return buttons
+    }
+}
+
+
+extension String {
+    var i18n: String {
+        NSLocalizedString(self, comment: "")
     }
 }
