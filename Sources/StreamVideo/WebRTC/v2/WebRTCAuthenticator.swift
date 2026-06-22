@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 /// Protocol defining the authentication process for WebRTC.
 protocol WebRTCAuthenticating {
@@ -45,6 +46,7 @@ protocol WebRTCAuthenticating {
 struct WebRTCAuthenticator: WebRTCAuthenticating {
 
     @Injected(\.audioStore) private var audioStore
+    
 
     /// Authenticates the WebRTC connection.
     /// - Parameters:
@@ -105,6 +107,9 @@ struct WebRTCAuthenticator: WebRTCAuthenticating {
         let callSettings = {
             var result = initialCallSettings ?? remoteCallSettings
             if audioStore.state.currentRoute.isExternal, result.speakerOn {
+                result = result.withUpdatedSpeakerState(false)
+            }
+            if AudioRouteManager.getCurrent().id != "speaker" {
                 result = result.withUpdatedSpeakerState(false)
             }
 

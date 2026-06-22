@@ -147,7 +147,7 @@ class CallController: @unchecked Sendable {
             joinCallResponseFetchObserver?.cancel()
             joinCallResponseFetchObserver = nil
         }
-
+        //modify
         try await webRTCCoordinator.connect(
             create: create,
             callSettings: callSettings,

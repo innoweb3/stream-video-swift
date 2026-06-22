@@ -109,7 +109,7 @@ public final class AudioRouteManager: ObservableObject {
 
     // MARK: - Helpers
 
-    private static func isExternalInput(_ p: AVAudioSessionPortDescription) -> Bool {
+    private nonisolated static func isExternalInput(_ p: AVAudioSessionPortDescription) -> Bool {
         switch p.portType {
         case .bluetoothHFP, .bluetoothA2DP, .bluetoothLE,
              .headphones, .headsetMic, .carAudio, .usbAudio, .lineIn:
@@ -119,7 +119,25 @@ public final class AudioRouteManager: ObservableObject {
         }
     }
 
-    private static func detectCurrent(
+
+    public nonisolated static func getCurrent() -> AudioRouteOption {
+        let session = AVAudioSession.sharedInstance()
+        var options: [AudioRouteOption] = []
+
+        // 外接设备（蓝牙、耳机）
+        let inputs = session.availableInputs ?? []
+        for input in inputs where Self.isExternalInput(input) {
+            options.append(.input(input))
+        }
+
+        // 听筒 + 扬声器
+        options.append(.receiver)
+        options.append(.speaker)
+
+        return detectCurrent(session: session, options: options)
+    }
+
+    private nonisolated static func detectCurrent(
         session: AVAudioSession,
         options: [AudioRouteOption]
     ) -> AudioRouteOption {
