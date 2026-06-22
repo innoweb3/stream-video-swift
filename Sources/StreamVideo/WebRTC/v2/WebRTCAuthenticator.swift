@@ -2,8 +2,8 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import AVFoundation
+import Foundation
 
 /// Protocol defining the authentication process for WebRTC.
 protocol WebRTCAuthenticating {
@@ -110,7 +110,7 @@ struct WebRTCAuthenticator: WebRTCAuthenticating {
                 result = result.withUpdatedSpeakerState(false)
             }
             
-            if AudioRouteManager.getCurrent().id != "speaker" {
+            if currentAudioOutput() != .speaker {
                 result = result.withUpdatedSpeakerState(false)
             }
 
@@ -218,5 +218,67 @@ struct WebRTCAuthenticator: WebRTCAuthenticating {
                 }
             }
             .nextValue(timeout: WebRTCConfiguration.timeout.connect)
+    }
+
+    // MARK: - Current Audio Output
+
+    /// Describes the currently-active audio output device.
+    enum CurrentAudioOutput: Equatable, CustomStringConvertible {
+        case speaker
+        case receiver
+        case bluetooth(name: String)
+        case headphones(name: String)
+        case carAudio(name: String)
+        case usb(name: String)
+        case other(name: String, portType: String)
+        case none
+
+        var isExternal: Bool {
+            switch self {
+            case .bluetooth, .headphones, .carAudio, .usb: return true
+            case .speaker, .receiver, .other, .none:       return false
+            }
+        }
+
+        var description: String {
+            switch self {
+            case .speaker:                     return "speaker"
+            case .receiver:                    return "receiver"
+            case .bluetooth(let n):            return "bluetooth(\(n))"
+            case .headphones(let n):           return "headphones(\(n))"
+            case .carAudio(let n):             return "carAudio(\(n))"
+            case .usb(let n):                  return "usb(\(n))"
+            case .other(let n, let t):         return "other(\(n), \(t))"
+            case .none:                        return "none"
+            }
+        }
+    }
+
+    /// Returns the audio output device currently in use, read directly from
+    /// `AVAudioSession.sharedInstance().currentRoute`. This reflects the
+    /// actual route — including any `overrideOutputAudioPort(.speaker)`
+    /// applied by the policy — and does not depend on the audio store being
+    /// initialized.
+    func currentAudioOutput() -> CurrentAudioOutput {
+        guard let output = AVAudioSession.sharedInstance().currentRoute.outputs.first else {
+            return .none
+        }
+
+        switch output.portType {
+        case .builtInSpeaker:
+            return .speaker
+        case .builtInReceiver:
+            return .receiver
+        case .bluetoothA2DP, .bluetoothLE, .bluetoothHFP:
+            return .bluetooth(name: output.portName)
+        case .headphones, .headsetMic:
+            return .headphones(name: output.portName)
+        case .carAudio:
+            return .carAudio(name: output.portName)
+        case .usbAudio:
+            return .usb(name: output.portName)
+        default:
+            return .other(name: output.portName, portType: output.portType.rawValue)
+        }
     }
 }
