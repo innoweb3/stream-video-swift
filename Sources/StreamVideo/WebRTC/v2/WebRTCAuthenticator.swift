@@ -110,6 +110,7 @@ struct WebRTCAuthenticator: WebRTCAuthenticating {
                 result = result.withUpdatedSpeakerState(false)
             }
             
+            //modify
             if currentAudioOutput() != .speaker {
                 result = result.withUpdatedSpeakerState(false)
             }
