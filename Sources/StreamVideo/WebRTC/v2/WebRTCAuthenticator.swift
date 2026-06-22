@@ -109,6 +109,7 @@ struct WebRTCAuthenticator: WebRTCAuthenticating {
             if audioStore.state.currentRoute.isExternal, result.speakerOn {
                 result = result.withUpdatedSpeakerState(false)
             }
+            
             if AudioRouteManager.getCurrent().id != "speaker" {
                 result = result.withUpdatedSpeakerState(false)
             }
